@@ -1,0 +1,197 @@
+<div style="display: show;" id="list">
+    <h4 class="my-3">{{this.title}}</h4>
+    <div class="col-md-12 row">
+        <div class="form-group col-md-4 mt-4">
+            <button type="button" class="btn btn-primary ml-2 mt-2" style="background-color: whitesmoke;color: #007bff;" (click)="edit(false)">
+                Novo Serviço
+            </button>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Tipo de Serviço</th>
+                <th scope="col">Data</th>
+                <th scope="col">Valor</th>
+                <th scope="col">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let serv of servicos | async">
+                <td>{{serv.tipoServico}}</td>
+                <td>{{serv.dataRealizacao | date:"dd/MM/yyyy"}}</td>
+                <td>R$ {{serv.valorTotal}}</td>
+                <td>
+                    <button type="button" class="btn btn-primary" (click)="edit(true,serv, serv.key)">Editar</button>
+                    <button type="button" class="btn btn-danger ml-2" (click)="delete(serv.key)">Excluir</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <a class="btn btn-primary" style="color:white;" routerLink="/">Voltar</a>
+</div>
+
+<div id="gif" style="display: none; margin-top:15%;margin-left:40%">
+    <img src="/assets/Spinner-1s-200px.gif" />
+</div>
+
+<div class="row mt-5 box-edit" style="display: none;" id="edit">
+    <h4 class="my-5">{{this.title}}</h4>
+    <div class="col-12 ">
+        <form (ngSubmit)="onSubmit() " class="form-row ">
+            <div class="form-group col-md-2 ">
+                <label>Tipo de Servico</label>
+                <select class="form-control " (change)="setService()" [(ngModel)]="tipoServico" [ngModelOptions]="{standalone: true}">
+                    <option [value]="1">Caixa D'água</option>
+                    <option [value]="2">Dedetização</option>
+                    <option [value]="3">Ambos</option>
+                </select>
+                <label style="margin-top: 1rem;">Vencimento em:</label>
+                <div>
+                    <input type="radio" id="6meses" name="vencimento" value="6meses" [checked]="servico.vctoSeisMeses" style="margin-right: 5px;">
+                    <label for="6meses"> 6 meses</label>
+                </div>
+
+                <div>
+                    <input type="radio" id="1ano" name="vencimento" value="1ano" [checked]="servico.vctoUmAno" style="margin-right: 5px;">
+                    <label for="1ano"> 1 ano</label>
+                </div>
+            </div>
+
+            <div class="col-12 form-row" *ngIf="tipoServico == '1' || tipoServico == '3' ">
+                <div class="form-group col-md-12">
+                    <h3>Caixa D'água</h3>
+                </div>
+                <div class="form-group col-md-4">
+                    <label>Descrição do Serviço</label>
+                    <textarea type="text" rows="5" class="form-control " [(ngModel)]="servico.descricaoServico " name="descricaoServico "> </textarea>
+                </div>
+                <div class="form-group col-md-4">
+                    <label>Observações</label>
+                    <textarea type="text" rows="5" class="form-control " [(ngModel)]="servico.obsCaixa " name="obsCaixa "> </textarea>
+                </div>
+                <div class="form-group col-md-4">
+                    <label>Sisternas</label>
+                    <textarea type="text" rows="5" class="form-control " [(ngModel)]="servico.sisternas " name="sisternas "> </textarea>
+                </div>
+
+                <div class="form-group col-md-2 ">
+                    <label>Qtd Reservatórios</label>
+                    <input type="number " class="form-control " [(ngModel)]="servico.quantidadeReservatorios " name="quantidadeReservatorios " />
+                </div>
+                <div class="form-group col-md-3 ">
+                    <label>Valor</label>
+                    <input type="number" class="form-control" [(ngModel)]="servico.valorCaixa " name="valorCaixa " />
+                </div>
+                <div class="form-group col-md-3 ">
+                    <label>Data de Realização</label>
+                    <input type="date" class="form-control " [(ngModel)]="servico.dataRealizacaoCaixa " name="dataRealizacaoCaixa " />
+                </div>
+                <div class="row col-md-12 ">
+                    <div class="form-group col-md-12 ">
+                        Materiais
+                    </div>
+                    <div class="form-group col-md-2 ">
+                        <input class="form-check-input" type="checkbox" id="Amianto" (change)="setMaterial('amianto')" [checked]="servico.isAmianto">
+                        <label class="form-check-label" for="Amianto">
+                            Amianto
+                        </label>
+                    </div>
+                    <div class="form-group col-md-2 ">
+                        <input class="form-check-input" type="checkbox" id="Fibra" (change)="setMaterial('fibra')" [checked]="servico.isFibra">
+                        <label class="form-check-label" for="Fibra">
+                            Fibra
+                        </label>
+                    </div>
+                    <div class="form-group col-md-2 ">
+                        <input class="form-check-input" type="checkbox" id="Polipropileno" (change)="setMaterial('polipropileno')" [checked]="servico.isPolipropileno">
+                        <label class="form-check-label" for="Polipropileno">
+                            Polipropileno
+                        </label>
+                    </div>
+                    <div class="form-group col-md-2 ">
+                        <input class="form-check-input" type="checkbox" (change)="setMaterial('inox')" id="Inox" [checked]="servico.isInox">
+                        <label class="form-check-label" for="Inox">
+                            Inox
+                        </label>
+                    </div>
+                    <div class="form-group col-md-2 ">
+                        <input class="form-check-input" type="checkbox" (change)="setMaterial('ferro')" id="Ferro" [checked]="servico.isFerro">
+                        <label class="form-check-label" for="Ferro">
+                            Ferro
+                        </label>
+                    </div>
+                    <div class="form-group col-md-2 ">
+                        <input class="form-check-input" type="checkbox" id="Concreto" (change)="setMaterial('concreto')" [checked]="servico.isConcreto">
+                        <label class="form-check-label" for="Concreto">
+                            Concreto
+                        </label>
+                    </div>
+                </div>
+
+
+                <div class="form-group col-md-5"></div>
+
+            </div>
+
+            <div class="col-12 form-row" *ngIf="tipoServico == '2' || tipoServico == '3' ">
+                <div class="form-group col-md-12">
+                    <h3>Dedetização</h3>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Local</label>
+                    <textarea type="text" rows="5" class="form-control " [(ngModel)]="servico.Local" name="local "> </textarea>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Observações</label>
+                    <textarea type="text" rows="5" class="form-control " [(ngModel)]="servico.obsDedetizacao " name="obsDedetizacao "> </textarea>
+                </div>
+
+                <div class="form-group col-md-7 ">
+                    <label>Para que? (mosca, barata,...)</label>
+                    <input type="text " class="form-control " [(ngModel)]="servico.paraQue " name="paraQue " />
+                </div>
+
+                <div class="form-group col-md-2 ">
+                    <label>Valor</label>
+                    <input type="number" class="form-control " [(ngModel)]="servico.valorDedetizacao " name="valorDedetizacao " />
+                </div>
+
+                <div class="form-group col-md-3 ">
+                    <label>Data de Realização</label>
+                    <input type="date" class="form-control " [(ngModel)]="servico.dataRealizacaoDedetizacao " name="dataRealizacaoDedetizacao " />
+                </div>
+
+            </div>
+
+
+            <div class="col-12 form-row mb-3" *ngIf="tipoServico != ''">
+                <div class="col-12 form-row">
+                    <div class="form-group col-md-12">
+                        <h3>Condições de Pagamento</h3>
+                    </div>
+                    <div class="form-group col-md-2 ">
+                        <label>Desconto</label>
+                        <input type="number" class="form-control " [(ngModel)]="servico.desconto " name="desconto " />
+                    </div>
+                    <div class="form-group col-md-2 ">
+                        <label>Parcelas</label>
+                        <select class="form-control " (change)="setParcelas()" [(ngModel)]="parcelas" [ngModelOptions]="{standalone: true}">
+                            <option [value]="0">A vista</option>
+                            <option [value]="1">1x</option>
+                            <option [value]="2">2x</option>
+                            <option [value]="3">3x</option>
+                            <option [value]="4">4x</option>
+                            <option [value]="5">5x</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary ml-2" style="background-color:green;border-color: green;">Salvar</button>
+            </div>
+            <div class="form-group col-md-12">
+                <a class="btn btn-primary" style="color:white;" (click)="return()">Voltar</a>
+            </div>
+
+        </form>
+    </div>
+</div>

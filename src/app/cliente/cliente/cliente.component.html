@@ -1,0 +1,201 @@
+<div style="display: show;" id="list">
+    <h4 class="my-3">Lista de Clientes</h4>
+    <div class="col-md-12 row">
+        <div class="form-group col-md-4">
+            <label>Filtrar clientes</label>
+            <input type="text" placeholder="Digite o nome" class="form-control" id="filtro" (keyup)="filter_client()" [(ngModel)]="filter" />
+        </div>
+        <div class="form-group col-md-8 mt-4">
+            <button type="button" class="btn btn-primary ml-2 mt-2" style="background-color: whitesmoke;color: #007bff;" (click)="edit(false)">
+            Novo Cliente
+          </button>
+            <button type="button" class="btn btn-danger ml-2 mt-2" (click)="showVencimentos()">
+            Acessar Serviços Vencidos ({{this.qtdVencidos}})
+          </button>
+            <button type="button" class="btn btn-primary ml-2 mt-2" (click)="showRelatorio()">
+            Acessar Relatório
+          </button>
+        </div>
+    </div>
+    <table id="listClients" class="table">
+        <thead>
+            <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">E-mail</th>
+                <th scope="col">Telefone</th>
+                <th scope="col">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let cliente of clientes | async">
+                <td>{{cliente.nome}}</td>
+                <td>{{cliente.email}}</td>
+                <td>{{cliente.telefone | telefone}}</td>
+                <td>
+                    <button type="button" class="btn btn-primary" (click)="edit(true,cliente, cliente.key)">Editar</button>
+                    <a type="button" class="btn btn-primary ml-2" style="background-color: whitesmoke;color: #007bff;" routerLink="/servico/{{cliente.key}}/{{cliente.nome}}/{{cliente.telefone}}" routerLinkActive="active">Serviços</a>
+                    <button type="button" class="btn btn-danger ml-2" (click)="delete(cliente.key)">Excluir</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div style="display: none;" id="vencidos">
+    <h4 class="my-3">Lista de Serviços Vencidos</h4>
+
+    <table id="listVencimentos" class="table">
+        <thead>
+            <tr>
+                <th scope="col">Cliente</th>
+                <th scope="col">Telefone</th>
+                <th scope="col">Tipo de Serviço</th>
+                <th scope="col">Data</th>
+                <th scope="col">Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let venc of vctos">
+                <td>{{venc.nomeCliente}}</td>
+                <td>{{venc.telefoneCliente |telefone}}</td>
+                <td>{{venc.tipoServico}}</td>
+                <td>{{venc.dataRealizacao | date:"dd/MM/yyyy"}}</td>
+                <td>R$ {{venc.valorTotal}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <a class="btn btn-primary" style="color:white;" (click)="return()">Voltar</a>
+</div>
+
+<div style="display: none;" id="relatorio">
+    <h4 class="my-3">Serviços Prestados: {{this.mes}}/{{this.ano}}</h4>
+    <div class="col-12 row">
+        <div class="form-group col-md-2 ">
+            <label>Mês</label>
+            <select class="form-control " [(ngModel)]="mes">
+                <option value="Janeiro">Janeiro</option>
+                <option value="Fevereiro">Fevereiro</option>
+                <option value="Março">Março</option>
+                <option value="Abril">Abril</option>
+                <option value="Maio">Maio</option>
+                <option value="Junho">Junho</option>
+                <option value="Julho">Julho</option>
+                <option value="Agosto">Agosto</option>
+                <option value="Setembro">Setembro</option>
+                <option value="Outubro">Outubro</option>
+                <option value="Novembro">Novembro</option>
+                <option value="Dezembro">Dezembro</option>
+            </select>
+        </div>
+        <div class="form-group col-md-2">
+            <label>Ano</label>
+            <input type="text" placeholder="Digite o ano" class="form-control" [(ngModel)]="ano" />
+        </div>
+        <div class="form-group col-md-2 mt-4">
+            <button type="button" class="btn btn-primary" (click)="db_getServicos()">Filtrar</button>
+        </div>
+    </div>
+
+    <table *ngIf="relatorios.length" id="listRelatorio" class="table">
+        <thead>
+            <tr>
+                <th class="col-md-3">Cliente</th>
+                <th class="col-md-1">Data</th>
+                <th class="col-md-2">Telefone</th>
+                <th class="col-md-2">Tipo de Serviço</th>
+                <th class="col-md-1">Valor Caixa</th>
+                <th class="col-md-1">Valor Dedetização</th>
+                <th class="col-md-1">Valor</th>
+                <th class="col-md-1">Desconto</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let rel of relatorios">
+                <td>{{rel.nomeCliente}}</td>
+                <td>{{rel.dataRealizacao | date:"dd/MM/yyyy"}}</td>
+                <td>{{rel.telefoneCliente | telefone}}</td>
+                <td>{{rel.tipoServico}}</td>
+                <td>R$ {{rel.valorCaixa}}</td>
+                <td>R$ {{rel.valorDedetizacao}}</td>
+                <td>R$ {{rel.valorTotal}}</td>
+                <td>R$ {{rel.desconto}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <div *ngIf="relatorios.length" class="row col-md-12">
+        <div class="col-md-2 valores">
+            <p>Valor Total <br> R${{this.valorTotal}}</p>
+        </div>
+        <div class="col-md-2 valores">
+            <p>Valor Total Descontos <br>R${{this.valorTotalDescontos}}</p>
+        </div>
+        <div class="col-md-2 valores">
+            <p>Valor Caixa <br> R${{this.valorCaixa}}</p>
+        </div>
+        <div class="col-md-2 valores">
+            <p>Valor Dedetização <br> R${{this.valorDedetizacao}}</p>
+        </div>
+    </div>
+    <a class="btn btn-primary" style="color:white;" (click)="return()">Voltar</a>
+</div>
+
+<div id="gif" style="display: none; margin-top:15%;margin-left:40%">
+    <img src="/assets/Spinner-1s-200px.gif" />
+</div>
+
+<div class="row mt-5 box-edit" style="display: none;" id="edit">
+    <h4 class="m-5">{{this.title}}</h4>
+    <div class="col-12 ">
+        <form (ngSubmit)="onSubmit() " class="form-row ">
+
+            <div class="form-group col-md-3 ">
+                <label>Nome / Razão Social</label>
+                <input type="text " class="form-control " [(ngModel)]="cliente.nome " name="nome " />
+            </div>
+
+            <div class="form-group col-md-3 ">
+                <label>CPF / CNPJ</label>
+                <input type="text" mask="000.000.000-00||00.000.000/0000-00" class="form-control " [(ngModel)]="cliente.cpf " name="cpf " />
+            </div>
+
+            <div class="form-group col-md-3 ">
+                <label>Telefone</label>
+                <input type="tel" mask="(00) 0000-0000 || (00) 00000-0000" class="form-control " [(ngModel)]="cliente.telefone " name="telefone " />
+            </div>
+
+            <div class="form-group col-md-3 ">
+                <label>Email</label>
+                <input type="email " class="form-control " [(ngModel)]="cliente.email " name="email " />
+            </div>
+
+            <div class="form-group col-md-3 ">
+                <label>Rua</label>
+                <input type="text " class="form-control " [(ngModel)]="cliente.rua " name="rua " />
+            </div>
+
+            <div class="form-group col-md-1 ">
+                <label>Número</label>
+                <input type="text " class="form-control " [(ngModel)]="cliente.numero " name="numero " />
+            </div>
+
+            <div class="form-group col-md-3 ">
+                <label>Bairro</label>
+                <input type="text " class="form-control " [(ngModel)]="cliente.bairro " name="bairro " />
+            </div>
+
+            <div class="form-group col-md-3 ">
+                <label>Cidade</label>
+                <input type="text " class="form-control " [(ngModel)]="cliente.cidade " name="cidade " />
+            </div>
+
+            <div class="form-group col-md-2 ">
+                <label>CEP</label>
+                <input type="text " class="form-control " mask="00000-000" [(ngModel)]="cliente.cep " name="cep " />
+            </div>
+            <div class="form-group mb-3 col-md-12">
+                <a class="btn btn-primary" style="color:white;" (click)="return()">Voltar</a>
+                <button type="submit" class="btn btn-primary ml-2" style="background-color:green;border-color: green;">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
