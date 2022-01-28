@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "firebase-crud": {
+        "GustavoGiachelin": {
             "projectType": "application",
             "schematics": {
                 "@schematics/angular:component": {
@@ -17,7 +17,7 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "outputPath": "dist/firebase-crud",
+                        "outputPath": "dist/GustavoGiachelin.github.io",
                         "index": "src/index.html",
                         "main": "src/main.ts",
                         "polyfills": "src/polyfills.ts",
@@ -62,18 +62,18 @@
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
-                        "browserTarget": "firebase-crud:build"
+                        "browserTarget": "GustavoGiachelin:build"
                     },
                     "configurations": {
                         "production": {
-                            "browserTarget": "firebase-crud:build:production"
+                            "browserTarget": "GustavoGiachelin:build:production"
                         }
                     }
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "firebase-crud:build"
+                        "browserTarget": "GustavoGiachelin:build"
                     }
                 },
                 "test": {
@@ -110,18 +110,18 @@
                     "builder": "@angular-devkit/build-angular:protractor",
                     "options": {
                         "protractorConfig": "e2e/protractor.conf.js",
-                        "devServerTarget": "firebase-crud:serve"
+                        "devServerTarget": "GustavoGiachelin:serve"
                     },
                     "configurations": {
                         "production": {
-                            "devServerTarget": "firebase-crud:serve:production"
+                            "devServerTarget": "GustavoGiachelin:serve:production"
                         }
                     }
                 }
             }
         }
     },
-    "defaultProject": "firebase-crud",
+    "defaultProject": "GustavoGiachelin",
     "cli": {
         "analytics": "d9069040-1605-4708-88a9-e17f73a72079"
     }

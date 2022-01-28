@@ -28,7 +28,7 @@
         </thead>
         <tbody>
             <tr *ngFor="let cliente of clientes | async">
-                <td>{{cliente.nome}}</td>
+                <td class="nome">{{cliente.nome}}</td>
                 <td>{{cliente.email}}</td>
                 <td>{{cliente.telefone | telefone}}</td>
                 <td>
@@ -43,6 +43,7 @@
 
 <div style="display: none;" id="vencidos">
     <h4 class="my-3">Lista de Serviços Vencidos</h4>
+    <a class="btn btn-primary" style="color:white;" (click)="return()">Voltar</a>
 
     <table id="listVencimentos" class="table">
         <thead>
